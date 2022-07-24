@@ -43,19 +43,33 @@ $ flask shell
 class Config:
     SECRET_KEY = "PLEASE CREATE YOUR SECRET_KEY"
 
-class developmentConfig(Config):
+class developmentConfig(Config): 
     DEBUG = True
-    CACHE_REDIS_URL = "redis://localhost:6379"
-    CELERY_BROKER_URL = 'redis://localhost:6379'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+    REDIS_HOST = "localhost"
+    REDIS_PORT = 6379
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
 
 class productionConfig(Config):
     DEBUG = False
-    CACHE_REDIS_URL = "redis://redis"
-    CELERY_BROKER_URL = 'redis://redis'
-    CELERY_RESULT_BACKEND = 'redis://redis'
+    REDIS_HOST = "redis://redis"
+    REDIS_PORT = 6379
+    CELERY_BROKER_URL = 'redis://redis:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
 
-config = {"development": developmentConfig, "production": productionConfig}
 
+class testConfig(Config):
+    TESTING = True
+    REDIS_HOST = "localhost"
+    REDIS_PORT = 6379
+    CELERY_BROKER_URL = 'redis://localhost:6379/2'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/3'
+
+
+config = {
+    "development": developmentConfig,
+    "production": productionConfig,
+    "test": testConfig
+}
 ```
