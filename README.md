@@ -5,22 +5,24 @@
 # 目錄
 - [crypto-price-scheduler](#crypto-price-scheduler)
 - [目錄](#目錄)
-- [skills](#skills)
+- [技術](#技術)
   - [Important Files](#important-files)
     - [How to create SECRET_KEY?](#how-to-create-secret_key)
     - [backend/app/config.py](#backendappconfigpy)
 
-# skills
+# 技術
+
+```tag```
 
 - Docker (Use Docker Services)
   - Docker-Compose
   - Redis
-  - PostgreSQL ```not in v2(tag)```
   - Nginx
 - Flask (backend)
 - Flask jinja2 (backend's html)
-- Flask-apscheduler (scheduler) ```not in v2(tag)```
-- Celery ```start in v2(tag)```
+- Flask SocketIO
+  - Python Eventlet(WSGI)
+- Celery 
 - Uwsgi
 
 ## Important Files
@@ -45,17 +47,18 @@ class Config:
 
 class developmentConfig(Config):
     DEBUG = True
-    CACHE_REDIS_URL = "redis://localhost:6379"
-    CELERY_BROKER_URL = 'redis://localhost:6379'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-
+    REDIS_HOST = "localhost"
+    REDIS_PORT = 6379
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
 class productionConfig(Config):
     DEBUG = False
-    CACHE_REDIS_URL = "redis://redis"
-    CELERY_BROKER_URL = 'redis://redis'
-    CELERY_RESULT_BACKEND = 'redis://redis'
+    REDIS_HOST = "redis://redis"
+    REDIS_PORT = 6379
+    CELERY_BROKER_URL = 'redis://redis:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
+
 
 config = {"development": developmentConfig, "production": productionConfig}
-
 ```
