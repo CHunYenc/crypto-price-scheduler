@@ -29,7 +29,7 @@ def make_celery(app):
     return celery
 
 
-def create_app():
+def create_app(env="production"):
     app = Flask(__name__)
     # setting logging
     log_file = os.path.join(os.getcwd(), *['logs', 'app.log'])
@@ -39,6 +39,9 @@ def create_app():
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
+    if env == "test":
+        app.config["ENV"] = 'test'
+
     config_name = app.config["ENV"].lower()
 
     # loading config
@@ -48,8 +51,12 @@ def create_app():
     elif config_name == "development":
         app.logger.info("載入 development")
         app.config.from_object(config[config_name])
+    elif config_name == 'test':
+        app.logger.info("載入 test")
+        app.config.from_object(config[config_name])
     else:
         logging.error("載入環境配置錯誤")
+        exit()
     # celery
     make_celery(app)
     with app.app_context():

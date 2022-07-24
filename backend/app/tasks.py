@@ -5,7 +5,6 @@ from . import celery
 from flask import current_app as app
 import ccxt
 
-r = make_redis(app)
 
 @celery.task
 def every_second_task():
@@ -14,21 +13,21 @@ def every_second_task():
 
 
 @celery.task
-def get_binance_tickers():
+def get_binance_tickers(redis):
     data = ccxt.binance().fetch_tickers()
     NAME = str.upper("crypto_binance")
-    r.set(NAME, json.dumps(data))
+    redis.set(NAME, json.dumps(data))
     app.logger.info("get binance tickers")
-    r.close()
+    redis.close()
 
 
 @celery.task
-def get_cryptocom_tickers():
+def get_cryptocom_tickers(redis):
     data = ccxt.cryptocom().fetch_tickers()
     NAME = str.upper("crypto_cryptocom")
-    r.set(NAME, json.dumps(data))
+    redis.set(NAME, json.dumps(data))
     app.logger.info("get crypto tickers")
-    r.close()
+    redis.close()
 
 
 @celery.on_after_configure.connect
